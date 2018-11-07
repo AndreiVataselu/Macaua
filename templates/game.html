@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+{% block players %}
+<p> hello</p>
+{% endblock players %}
+
+{% block current_card %}
+    <img class="img-responsive" src="{{ card_on_table }}" width="250" height="363">
+{% endblock current_card %}
+
+{% block player_cards %}
+    {% for card in player_deck %}
+    <img class="img-responsive" src="{{ card }}" width="100" height="145">
+    {% endfor %}
+{% endblock player_cards %}
