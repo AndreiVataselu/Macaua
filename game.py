@@ -10,7 +10,6 @@ class Game:
                         'Miriam', 'Casimira', 'Zena', 'Hae', 'Chanell', 'Ione']
         self.ainames_index = sample(range(len(self.ainames)), players_number)
 
-
         self.deck = [i for i in range(54)]
         self.shuffle_cards()
         self.players_cards = [[self.deck.pop() for _ in range(5)] for _ in range(players_number)]

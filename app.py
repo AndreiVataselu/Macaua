@@ -3,11 +3,11 @@ import cards
 from game import Game
 
 app = Flask(__name__)
+game = Game(4)
 
 
 @app.route('/')
-def hello_world():
-    game = Game(4)
+def game_main():
     deckImg = [cards.images[game.players_cards[0][i]] for i in range(5)]
     aiplayers = game.ai_players
     return render_template('game.html', card_on_table=cards.images[game.card_on_table], player_deck=deckImg,

@@ -12,6 +12,6 @@
 
 {% block player_cards %}
     {% for card in player_deck %}
-    <img class="img-responsive" src="{{ card }}" href="#" width="100" height="145">
+    <a href="#"><img class="img-responsive" src="{{ card }}" width="100" height="145"></a>
     {% endfor %}
 {% endblock player_cards %}
