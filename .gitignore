@@ -83,6 +83,7 @@ fabric.properties
 
 venv
 __pycache__
+.idea
 
 # End of https://www.gitignore.io/api/pycharm
 
