@@ -12,10 +12,11 @@
   </head>
   <body>
     <div class="container">
-    {% block players %}{% endblock %}
+    <div class="float-left">
+        <ul class="pt-4 list-group">{% block players %}{% endblock %}</ul></div>
         <div class="pt-4 text-center">
             {% block current_card %}{% endblock %}
-            <img class="ml-4 img-responsive" src="/static/cards/back.png" width="250" height="363">
+            <img class="ml-4 img-responsive" src="/static/cards/back.png" href="#" width="250" height="363">
                 <div class="pt-4">{% block player_cards %}{% endblock %}</div>
         </div>
     </div>
