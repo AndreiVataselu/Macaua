@@ -31,6 +31,13 @@ class Game:
     def draw_card(self, player_deck):
         player_deck.append(self.deck.pop())
 
+    def put_card(self, card):
+        self.deck.insert(0, self.card_on_table)
+
+        for player_card in self.player_cards:
+            if player_card.id == card:
+                self.card_on_table = self.player_cards.pop(self.player_cards.index(player_card))
+
     # Checks if the card is a bulge
     def bulge_card(self, card):
         if (card == CLUBS_2 or card == CLUBS_3 or card == DIAMONDS_2 or card == DIAMONDS_3 or card == HEARTS_2 or
