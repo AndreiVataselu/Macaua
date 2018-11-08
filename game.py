@@ -12,18 +12,24 @@ class Game:
 
         self.deck = [i for i in range(54)]
         self.shuffle_cards()
-        self.players_cards = [[self.deck.pop() for _ in range(5)] for _ in range(players_number)]
-        self.ai_players = [AIPlayer(self.players_cards[i], self.ainames[self.ainames_index[i]])
+        self.handed_cards = [[Card(self.deck.pop()) for _ in range(5)] for _ in range(players_number)]
+        self.ai_players = [AIPlayer(self.handed_cards[i], self.ainames[self.ainames_index[i]])
                            for i in range(1, players_number)]
-        self.card_on_table = self.deck.pop()
+        self.player_cards = self.handed_cards[0]
+
+        self.card_on_table = Card(self.deck.pop())
 
         # No bulge card or wait turn card from beginning of game
-        while self.bulge_card(self.card_on_table) or self.wait_turn_card(self.card_on_table):
-            self.deck.insert(0, self.card_on_table)
-            self.card_on_table = self.deck.pop()
+        while self.bulge_card(self.card_on_table.id) or self.wait_turn_card(self.card_on_table.id):
+            self.deck.insert(0, self.card_on_table.id)
+            self.card_on_table = Card(self.deck.pop())
 
+    # Basic cards functions
     def shuffle_cards(self):
         return shuffle(self.deck)
+
+    def draw_card(self, player_deck):
+        player_deck.append(Card(self.deck.pop()))
 
     # Checks if the card is a bulge
     def bulge_card(self, card):
@@ -48,5 +54,12 @@ class AIPlayer:
     @property
     def cards_left(self):
         return len(self.playing_cards)
+
+
+class Card:
+
+    def __init__(self, ID):
+        self.image = images[ID]
+        self.id = ID
 
 
