@@ -13,8 +13,12 @@ def game_main():
 
 @app.route('/chosenCard', methods=['POST'])
 def chosen_card():
-    chosen_card = int(request.json)
-    game.put_card(chosen_card)
+    try:
+        chosen_card = int(request.json)
+        game.put_card(chosen_card)
+
+    except ValueError:
+        print('Clicked on screen')
 
     return jsonify({'player_cards': render_template('playercards.html', player_deck=game.player_cards),
                     'table_card': render_template('cardOnTable.html', card_on_table=game.card_on_table)})
