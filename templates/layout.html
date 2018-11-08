@@ -16,9 +16,10 @@
     <div class="float-left">
         <ul class="pt-4 list-group">{% block players %}{% endblock %}</ul></div>
         <div class="pt-4 text-center">
-        <div class="tableCard">{% block current_card %}{% endblock %}
-        <a href="#"><img class="ml-4 img-responsive drawCard" src="/static/cards/back.png" width="250" height="363"></a></div>
-
+        <section>
+        <div class="tableCard">{% block current_card %}{% endblock %}</div>
+        <a href="#"><img class="ml-4 img-responsive drawCard" src="/static/cards/back.png" width="250" height="363"></a>
+        </section>
             <div class="pt-4 playerDeck">{% block player_cards %}{% endblock %}</div>
         </div>
     </div>

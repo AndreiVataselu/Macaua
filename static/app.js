@@ -11,9 +11,9 @@ $(function(){
       });
    });
 
-   $('.playerCard').on('click', function(e){
+   $(document).on('click', function(e){
       req = $.ajax({
-          url : '/cardChose',
+          url : '/chosenCard',
           type : 'POST',
           data: JSON.stringify(e.target.id, null, '\t'),
           contentType: 'application/json;charset=UTF-8'

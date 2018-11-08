@@ -11,8 +11,8 @@ def game_main():
                            players_cards=game.ai_players)
 
 
-@app.route('/cardChose', methods=['POST'])
-def card_chose():
+@app.route('/chosenCard', methods=['POST'])
+def chosen_card():
     chosen_card = int(request.json)
     game.put_card(chosen_card)
 

@@ -1,2 +1,9 @@
 a img:hover{ position: relative;
              top: -5px;}
+section {
+    display: flex
+}
+
+.tableCard {
+    margin-left: 25%;
+}
