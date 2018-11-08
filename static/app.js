@@ -6,10 +6,9 @@ $(function(){
       });
 
       req.done(function(resp) {
-         $('.playerDeck').append(resp.data);
+         $('.playerDeck').html(resp.data);
 
       });
-
    });
 
    $('.playerCard').on('click', function(){

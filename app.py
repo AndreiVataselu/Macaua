@@ -1,5 +1,4 @@
 from flask import Flask, render_template, jsonify
-import cards
 from game import Game
 
 app = Flask(__name__)
@@ -24,8 +23,7 @@ def draw_card():
 
     # Had to return 'player_deck' as a list of a single element so the AJAX script can iterate
     # through it and append to existing cards.
-    return jsonify({'data': render_template('playercards.html',
-                                            player_deck=[game.player_cards[len(game.player_cards) - 1]])})
+    return jsonify({'data': render_template('playercards.html', player_deck=game.player_cards)})
 
 
 if __name__ == '__main__':
