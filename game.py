@@ -10,11 +10,14 @@ class Game:
                         'Miriam', 'Casimira', 'Zena', 'Hae', 'Chanell', 'Ione']
         self.ainames_index = sample(range(len(self.ainames)), players_number)
 
+        self.console_text = ""
         self.deck = [Card(i) for i in range(54)]
         self.shuffle_cards()
         self.handed_cards = [[self.deck.pop() for _ in range(5)] for _ in range(players_number)]
         self.ai_players = [AIPlayer(self.handed_cards[i], self.ainames[self.ainames_index[i]])
                            for i in range(1, players_number)]
+
+        self.player_name = "Michael" # <- User will be able to change his name
         self.player_cards = self.handed_cards[0]
 
         self.card_on_table = self.deck.pop()
@@ -30,6 +33,7 @@ class Game:
 
     def draw_card(self, player_deck):
         player_deck.append(self.deck.pop())
+        self.console_text = "draws a card!"
 
     def put_card(self, card):
         self.deck.insert(0, self.card_on_table)

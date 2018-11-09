@@ -1,4 +1,12 @@
 $(function(){
+
+    // - To be updated for keeping scroll on bottom
+    var element = document.getElementById("console");
+    function scroll(){
+        element.scrollTop = element.scrollHeight;
+    }
+
+
    $('.drawCard').on('click', function(){
       req = $.ajax({
          url: '/drawCard',
@@ -7,6 +15,8 @@ $(function(){
 
       req.done(function(resp) {
          $('.playerDeck').html(resp.player_cards);
+         $('#console').append(resp.console_text);
+         scroll();
 
       });
    });

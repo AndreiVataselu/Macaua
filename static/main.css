@@ -1,9 +1,18 @@
 a img:hover{ position: relative;
              top: -5px;}
 section {
-    display: flex
+    display: flex;
 }
 
 .tableCard {
     margin-left: 25%;
+}
+
+#console {
+    overflow-y: scroll;
+    height: 200px;
+    margin-top: 2%;
+    margin-left: 25%;
+    background-color: rgb(240, 248, 255);
+    padding-left: 3%;
 }

@@ -24,13 +24,15 @@ def chosen_card():
         print('Clicked on screen')
 
     return jsonify({'player_cards': render_template('playercards.html', player_deck=game.player_cards),
-                    'table_card': render_template('cardOnTable.html', card_on_table=game.card_on_table)})
+                    'table_card': render_template('cardOnTable.html', card_on_table=game.card_on_table),
+                    'console_text': render_template('console.html', console_text=game.console_text)})
 
 
 @app.route('/drawCard', methods=['POST'])
 def draw_card():
     game.draw_card(game.player_cards)
-    return jsonify({'player_cards': render_template('playercards.html', player_deck=game.player_cards)})
+    return jsonify({'player_cards': render_template('playercards.html', player_deck=game.player_cards),
+                    'console_text': render_template('console.html', console_text=game.console_text, player_name=game.player_name)})
 
 
 if __name__ == '__main__':
