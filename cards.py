@@ -11,7 +11,7 @@ class Card:
 
 # CARDS VARIABLES:
 
-# Clubs
+# Clubs (0,11)
 CLUBS_2 = 0
 CLUBS_3 = 1
 CLUBS_4 = 2
@@ -26,7 +26,7 @@ CLUBS_Q = 10
 CLUBS_K = 11
 CLUBS_ACE = 12
 
-# Diamonds
+# Diamonds (13,24)
 DIAMONDS_2 = 13
 DIAMONDS_3 = 14
 DIAMONDS_4 = 15
@@ -41,7 +41,7 @@ DIAMONDS_Q = 23
 DIAMONDS_K = 24
 DIAMONDS_ACE = 25
 
-# Hearts
+# Hearts (26, 37)
 HEARTS_2 = 26
 HEARTS_3 = 27
 HEARTS_4 = 28
@@ -56,7 +56,7 @@ HEARTS_Q = 36
 HEARTS_K = 37
 HEARTS_ACE = 38
 
-# Spades
+# Spades (39,50)
 SPADES_2 = 39
 SPADES_3 = 40
 SPADES_4 = 41

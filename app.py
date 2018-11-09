@@ -15,7 +15,10 @@ def game_main():
 def chosen_card():
     try:
         player_chosen_card = int(request.json)
-        game.put_card(player_chosen_card)
+        if game.is_compatbile(player_chosen_card):
+            game.put_card(player_chosen_card)
+        else:
+            print("card not compatible")
 
     except ValueError:
         print('Clicked on screen')
