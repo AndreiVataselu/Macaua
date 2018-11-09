@@ -38,7 +38,7 @@ class Game:
             if player_card.id == card:
                 self.card_on_table = self.player_cards.pop(self.player_cards.index(player_card))
 
-    # Game functions
+    # -----------------------------------   Game functions   --------------------------------------------------
 
     # Checks if the card is a bulge
     def is_bulge_card(self, card):
@@ -77,7 +77,7 @@ class Game:
             return True
         return False
 
-
+    # ---------------------------------------------------------------------------------------------------------
 class AIPlayer:
 
     def __init__(self, aicards, name):
