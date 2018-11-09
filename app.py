@@ -14,8 +14,8 @@ def game_main():
 @app.route('/chosenCard', methods=['POST'])
 def chosen_card():
     try:
-        chosen_card = int(request.json)
-        game.put_card(chosen_card)
+        player_chosen_card = int(request.json)
+        game.put_card(player_chosen_card)
 
     except ValueError:
         print('Clicked on screen')

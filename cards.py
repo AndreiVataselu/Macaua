@@ -1,4 +1,13 @@
-from flask import url_for
+
+# CARDS Class:
+
+
+class Card:
+
+    def __init__(self, ID):
+        self.image = images[ID]
+        self.id = ID
+
 
 # CARDS VARIABLES:
 

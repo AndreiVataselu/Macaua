@@ -63,10 +63,3 @@ class AIPlayer:
         return len(self.playing_cards)
 
 
-class Card:
-
-    def __init__(self, ID):
-        self.image = images[ID]
-        self.id = ID
-
-
