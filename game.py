@@ -41,9 +41,14 @@ class Game:
         for player_card in self.player_cards:
             if player_card.id == card:
                 self.card_on_table = self.player_cards.pop(self.player_cards.index(player_card))
-                self.console_text = "places a {0}".format(names[card])
+                self.console_text = "places a card of {0}".format(names[card])
 
     # -----------------------------------   Game functions   --------------------------------------------------
+
+    def is_ace(self, card):
+        if card == SPADES_ACE or card == HEARTS_ACE or card == DIAMONDS_ACE or card == CLUBS_ACE:
+            return True
+        return False
 
     # Checks if the card is a bulge
     def is_bulge_card(self, card):
@@ -58,7 +63,7 @@ class Game:
             return True
         return False
 
-    def is_same_type(self, card):
+    def is_same_type(self, card): # Same number but not same suit
         for i in range(4):
             if self.card_on_table.id + i*13 == card or self.card_on_table.id - i*13 == card:
                 return True
@@ -80,11 +85,13 @@ class Game:
             return True
         elif self.is_same_type(card):
             return True
-        elif card == CLUBS_ACE or card == DIAMONDS_ACE or card == HEARTS_ACE or card == SPADES_ACE:
+        elif self.is_ace(card):
             return True
         return False
 
     # ---------------------------------------------------------------------------------------------------------
+
+
 class AIPlayer:
 
     def __init__(self, aicards, name):

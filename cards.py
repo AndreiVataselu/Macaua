@@ -10,7 +10,6 @@ class Card:
 
 
 # CARDS VARIABLES:
-
 # Clubs (0,11)
 CLUBS_2 = 0
 CLUBS_3 = 1

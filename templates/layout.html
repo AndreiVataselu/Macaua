@@ -13,17 +13,32 @@
   </head>
   <body>
     <div class="container">
-    <div class="float-left">
-        <ul class="pt-4 list-group">{% block players %}{% endblock %}</ul></div>
+        <div class="float-left">
+            <ul class="pt-4 list-group">{% block players %}{% endblock %}
+            </ul>
+        </div>
         <div class="pt-4 text-center">
-        <section>
-        <div class="tableCard">{% block current_card %}{% endblock %}</div>
-        <a href="#"><img class="ml-4 img-responsive drawCard" src="/static/cards/back.png" width="250" height="363"></a>
-        </section>
+            <section>
+            <div class="tableCard">{% block current_card %}{% endblock %}</div>
+            <a href="#"><img class="ml-4 img-responsive drawCard" src="/static/cards/back.png" width="250" height="363"></a>
+            </section>
             <div class="pt-4 playerDeck">{% block player_cards %}{% endblock %}</div>
         </div>
-        <div id="console">{% block console %}{% endblock %}</div>
+            <div id="console">{% block console %}{% endblock %}</div>
     </div>
+
+    <div id="pickSuit" class="modal">
+    <div class="modal-content">
+        <div class="text-center">
+            <p id="modal-paragraph">You put an ace on the table. Pick a suit for the next card:</p>
+            <span class="suit" style="color:red" id="diamonds">&diams;</span>
+            <span class="suit" style="color:red" id="hearts">&hearts;</span>
+            <span class="suit" id="clubs">&clubs;</span>
+            <span class="suit" id="spades">&spades;</span>
+        </div>
+    </div>
+    </div>
+
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="http://code.jquery.com/jquery.js"></script>

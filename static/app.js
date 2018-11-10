@@ -1,10 +1,11 @@
 $(function(){
 
-    // - To be updated for keeping scroll on bottom
     var element = document.getElementById("console");
     function scroll(){
         element.scrollTop = element.scrollHeight;
     }
+
+    var modal = document.getElementById("pickSuit");
 
 
    $('.drawCard').on('click', function(){
@@ -21,7 +22,7 @@ $(function(){
       });
    });
 
-   $(document).on('click', function(e){
+   $(document).on('click', 'div.playerDeck' ,function(e){
       req = $.ajax({
           url : '/chosenCard',
           type : 'POST',
@@ -35,6 +36,10 @@ $(function(){
         $('.tableCard').html(resp.table_card);
         $('#console').append(resp.console_text);
          scroll();
+         if(resp.ace==true){
+             console.log("ace-true");
+             modal.style.display = "block";
+         }
       });
    });
 });

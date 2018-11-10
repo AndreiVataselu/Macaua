@@ -2,7 +2,7 @@ from flask import Flask, render_template, jsonify, request
 from game import Game
 
 app = Flask(__name__)
-game = Game(4)
+game = Game(2)
 
 
 @app.route('/')
@@ -13,17 +13,26 @@ def game_main():
 
 @app.route('/chosenCard', methods=['POST'])
 def chosen_card():
+    # TODO: Bug - When a player clicks an ace on the table he can change the suit.
     try:
         player_chosen_card = int(request.json)
         if game.is_compatbile(player_chosen_card):
             game.put_card(player_chosen_card)
+            if game.is_ace(player_chosen_card):
+                return jsonify({'player_cards': render_template('playercards.html', player_deck=game.player_cards),
+                                'table_card': render_template('cardOnTable.html', card_on_table=game.card_on_table),
+                                'console_text': render_template('console.html', console_text=game.console_text,
+                                                                player_name=game.player_name),
+                                'ace': True})
+            else:
+                return jsonify({'player_cards': render_template('playercards.html', player_deck=game.player_cards),
+                                'table_card': render_template('cardOnTable.html', card_on_table=game.card_on_table),
+                                'console_text': render_template('console.html', console_text=game.console_text,
+                                                                player_name=game.player_name)})
 
-            return jsonify({'player_cards': render_template('playercards.html', player_deck=game.player_cards),
-                            'table_card': render_template('cardOnTable.html', card_on_table=game.card_on_table),
-                            'console_text': render_template('console.html', console_text=game.console_text,
-                                                            player_name=game.player_name)})
         else:
             print("card not compatible")
+            return jsonify({'result': 'failed'})
 
     except ValueError:
         print('Clicked on screen')
