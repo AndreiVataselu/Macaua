@@ -33,6 +33,8 @@ $(function(){
       req.done(function(resp){
         $('.playerDeck').html(resp.player_cards);
         $('.tableCard').html(resp.table_card);
+        $('#console').append(resp.console_text);
+         scroll();
       });
    });
 });

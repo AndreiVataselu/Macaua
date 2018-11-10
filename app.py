@@ -17,22 +17,26 @@ def chosen_card():
         player_chosen_card = int(request.json)
         if game.is_compatbile(player_chosen_card):
             game.put_card(player_chosen_card)
+
+            return jsonify({'player_cards': render_template('playercards.html', player_deck=game.player_cards),
+                            'table_card': render_template('cardOnTable.html', card_on_table=game.card_on_table),
+                            'console_text': render_template('console.html', console_text=game.console_text,
+                                                            player_name=game.player_name)})
         else:
             print("card not compatible")
 
     except ValueError:
         print('Clicked on screen')
-
-    return jsonify({'player_cards': render_template('playercards.html', player_deck=game.player_cards),
-                    'table_card': render_template('cardOnTable.html', card_on_table=game.card_on_table),
-                    'console_text': render_template('console.html', console_text=game.console_text)})
+        return jsonify({'result': 'failed'})
 
 
 @app.route('/drawCard', methods=['POST'])
 def draw_card():
     game.draw_card(game.player_cards)
+
     return jsonify({'player_cards': render_template('playercards.html', player_deck=game.player_cards),
-                    'console_text': render_template('console.html', console_text=game.console_text, player_name=game.player_name)})
+                    'console_text': render_template('console.html', console_text=game.console_text,
+                                                    player_name=game.player_name)})
 
 
 if __name__ == '__main__':

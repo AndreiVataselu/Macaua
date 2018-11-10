@@ -41,6 +41,7 @@ class Game:
         for player_card in self.player_cards:
             if player_card.id == card:
                 self.card_on_table = self.player_cards.pop(self.player_cards.index(player_card))
+                self.console_text = "places a {0}".format(names[card])
 
     # -----------------------------------   Game functions   --------------------------------------------------
 
@@ -78,6 +79,8 @@ class Game:
         elif self.is_wait_turn_card(self.card_on_table.id) and self.is_wait_turn_card(card):
             return True
         elif self.is_same_type(card):
+            return True
+        elif card == CLUBS_ACE or card == DIAMONDS_ACE or card == HEARTS_ACE or card == SPADES_ACE:
             return True
         return False
 
