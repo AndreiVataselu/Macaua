@@ -17,7 +17,7 @@ $(function(){
          $('.playerDeck').html(resp.player_cards);
          $('#console').append(resp.console_text);
          scroll();
-
+         aiMove()
       });
    });
 
@@ -38,12 +38,13 @@ $(function(){
          if(resp.ace==true){
              console.log("ace-true");
              modal.style.display = "block";
+         } else {
+             aiMove()
          }
       });
    });
 
    $(document).on('click', 'span.suit', function(e){
-       console.log(e.target.id);
        req = $.ajax({
            url: '/changeSuit',
            type: 'POST',
@@ -55,6 +56,21 @@ $(function(){
            $('#console').append(resp.console_text);
            scroll();
            modal.style.display = "none";
+           aiMove()
        });
    });
+
+   function aiMove(){
+       req = $.ajax({
+          url: '/AImove',
+          type: 'POST'
+       });
+
+       req.done(function(resp){
+          $('#console').append(resp.console_text);
+          scroll();
+          $('.tableCard').html(resp.table_card);
+          $('.aiPlayers').html(resp.aiPlayers);
+       });
+   }
 });

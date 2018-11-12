@@ -1,5 +1,6 @@
 from cards import *
 from random import shuffle, sample
+from player import *
 
 
 class Game:
@@ -17,11 +18,14 @@ class Game:
         self.deck = [Card(i) for i in range(54)]
         self.shuffle_cards()
         self.handed_cards = [[self.deck.pop() for _ in range(5)] for _ in range(players_number)]
-        self.ai_players = [AIPlayer(self.handed_cards[i], self.ainames[self.ainames_index[i]])
-                           for i in range(1, players_number)]
+        self.ai_players = [AIPlayer(player_cards=self.handed_cards[i], name=self.ainames[self.ainames_index[i]],
+                                    player_index=i) for i in range(1, players_number)]
 
-        self.player_name = "Michael"  # <- User will be able to change his name
-        self.player_cards = self.handed_cards[0]
+        self.player = Player(name="Michael", player_cards=self.handed_cards[0], player_index=0)
+
+        self._turn = [i for i in range(players_number)]
+        self.turn = None
+        self.next_turn()
 
         self.card_on_table = self.deck.pop()
 
@@ -41,6 +45,11 @@ class Game:
         self.console_text = "changes the suit to {0}".format(suit.title())
         self._current_suit = suit
 
+    # Cycle through a list
+    def next_turn(self):
+        self.turn = self._turn.pop(0);
+        self._turn.append(self.turn)
+
     # Basic cards functions
     def shuffle_cards(self):
         return shuffle(self.deck)
@@ -48,14 +57,16 @@ class Game:
     def draw_card(self, player_deck):
         player_deck.append(self.deck.pop())
         self.console_text = "draws a card!"
+        self.next_turn()
 
-    def put_card(self, card):
+    def put_card(self, card, playing_cards):
         self.deck.insert(0, self.card_on_table)
 
-        for player_card in self.player_cards:
+        for player_card in playing_cards:
             if player_card.id == card:
-                self.card_on_table = self.player_cards.pop(self.player_cards.index(player_card))
+                self.card_on_table = playing_cards.pop(playing_cards.index(player_card))
                 self.console_text = "places a card of {0}".format(names[card])
+                self.next_turn()
 
     # -----------------------------------   Game functions   --------------------------------------------------
 
@@ -105,16 +116,4 @@ class Game:
         return False
 
     # ---------------------------------------------------------------------------------------------------------
-
-
-class AIPlayer:
-
-    def __init__(self, aicards, name):
-        self.playing_cards = aicards
-        self.name = name
-
-    @property
-    def cards_left(self):
-        return len(self.playing_cards)
-
 

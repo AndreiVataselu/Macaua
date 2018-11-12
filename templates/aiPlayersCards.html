@@ -1,0 +1,5 @@
+{% block players %}
+    {% for player in players_cards %}
+        <li class="list-group-item"><b>{{ player.name }}: </b> {{ player.cards_left }} cards left</li>
+    {% endfor %}
+{% endblock players %}
