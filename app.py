@@ -10,10 +10,8 @@ game = Game(3)
 @app.route('/')
 def game_main():
 
-    while True:
-        ai_make_move()
-        return render_template('game.html', card_on_table=game.card_on_table, player_deck=game.player.playing_cards,
-                               players_cards=game.ai_players)
+    return render_template('game.html', card_on_table=game.card_on_table, player_deck=game.player.playing_cards,
+                           players_cards=game.ai_players)
 
 
 @app.route('/AImove', methods=['POST'])
@@ -37,8 +35,8 @@ def ai_make_move():
             'console_text': render_template('console.html', console_text=game.console_text,
                                             player_name=ai_name),
             'table_card': render_template('cardOnTable.html', card_on_table=game.card_on_table),
-            'aiPlayers': render_template('aiPlayersCards.html', players_cards=game.ai_players)
-
+            'aiPlayers': render_template('aiPlayersCards.html', players_cards=game.ai_players),
+            'turnsToMake': len(game.ai_players)
         })
 
 
@@ -55,14 +53,16 @@ def chosen_card():
                         'table_card': render_template('cardOnTable.html', card_on_table=game.card_on_table),
                         'console_text': render_template('console.html', console_text=game.console_text,
                                                         player_name=game.player.name),
-                        'ace': True
+                        'ace': True,
+                        'turnsToMake': len(game.ai_players)
                     })
                 else:
                     return jsonify({
                         'player_cards': render_template('playercards.html', player_deck=game.player.playing_cards),
                         'table_card': render_template('cardOnTable.html', card_on_table=game.card_on_table),
                         'console_text': render_template('console.html', console_text=game.console_text,
-                                                        player_name=game.player.name)
+                                                        player_name=game.player.name),
+                        'turnsToMake': len(game.ai_players)
                     })
 
             else:
@@ -85,7 +85,8 @@ def draw_card():
 
         return jsonify({'player_cards': render_template('playercards.html', player_deck=game.player.playing_cards),
                         'console_text': render_template('console.html', console_text=game.console_text,
-                                                        player_name=game.player.name)})
+                                                        player_name=game.player.name),
+                        'turnsToMake': len(game.ai_players)})
     else:
         return jsonify({'result': 'failed'})
 
@@ -95,8 +96,8 @@ def change_suit():
     game.current_suit = request.json
 
     return jsonify({
-        'console_text': render_template('console.html', console_text=game.console_text, player_name=game.player.name)
-    })
+        'console_text': render_template('console.html', console_text=game.console_text, player_name=game.player.name),
+        'turnsToMake': len(game.ai_players)})
 
 
 if __name__ == '__main__':

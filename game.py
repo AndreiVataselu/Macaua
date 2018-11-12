@@ -6,7 +6,7 @@ from player import *
 class Game:
 
     def __init__(self, players_number):
-        self.ainames = ['Elvie', 'Mac', 'Lida', 'Todd', 'Soledad', 'Valarie', 'Sylvester',
+        self.ainames = ['Elvie', 'Mac', 'Lida', 'Todd', 'Soledad', 'Valerie', 'Sylvester',
                         'Ericka', 'Nicolette', 'Clay', 'Claretha', 'Kit', 'Myron', 'Susanne',
                         'Miriam', 'Casimira', 'Zena', 'Hae', 'Chanell', 'Ione']
         self.ainames_index = sample(range(len(self.ainames)), players_number)

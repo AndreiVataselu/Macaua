@@ -17,7 +17,8 @@ $(function(){
          $('.playerDeck').html(resp.player_cards);
          $('#console').append(resp.console_text);
          scroll();
-         aiMove()
+         aiMove(resp.turnsToMake);
+
       });
    });
 
@@ -35,11 +36,11 @@ $(function(){
         $('.tableCard').html(resp.table_card);
         $('#console').append(resp.console_text);
          scroll();
-         if(resp.ace==true){
+         if(resp.ace===true){
              console.log("ace-true");
              modal.style.display = "block";
          } else {
-             aiMove()
+             aiMove(resp.turnsToMake);
          }
       });
    });
@@ -56,21 +57,23 @@ $(function(){
            $('#console').append(resp.console_text);
            scroll();
            modal.style.display = "none";
-           aiMove()
+           aiMove(resp.turnsToMake)
        });
    });
 
-   function aiMove(){
-       req = $.ajax({
-          url: '/AImove',
-          type: 'POST'
-       });
+   function aiMove(turnsToMake){
+       for (i=0; i < turnsToMake; i++) {
+           req = $.ajax({
+              url: '/AImove',
+              type: 'POST'
+           });
 
-       req.done(function(resp){
-          $('#console').append(resp.console_text);
-          scroll();
-          $('.tableCard').html(resp.table_card);
-          $('.aiPlayers').html(resp.aiPlayers);
-       });
-   }
+           req.done(function(resp){
+              $('#console').append(resp.console_text);
+              scroll();
+              $('.tableCard').html(resp.table_card);
+              $('.aiPlayers').html(resp.aiPlayers);
+
+           });
+   }}
 });
