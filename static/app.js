@@ -7,7 +7,6 @@ $(function(){
 
     var modal = document.getElementById("pickSuit");
 
-
    $('.drawCard').on('click', function(){
       req = $.ajax({
          url: '/drawCard',
@@ -41,5 +40,21 @@ $(function(){
              modal.style.display = "block";
          }
       });
+   });
+
+   $(document).on('click', 'span.suit', function(e){
+       console.log(e.target.id);
+       req = $.ajax({
+           url: '/changeSuit',
+           type: 'POST',
+           data: JSON.stringify(e.target.id, null, '\t'),
+           contentType: 'application/json;charset=UTF-8'
+       });
+
+       req.done(function(resp){
+           $('#console').append(resp.console_text);
+           scroll();
+           modal.style.display = "none";
+       });
    });
 });

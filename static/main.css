@@ -8,13 +8,6 @@ section {
     margin-left: 25%;
 }
 
-.diamonds{
-    color: red;
-}
-
-.hearts {
-    color: red;
-}
 
 #console {
     overflow-y: scroll;
@@ -45,12 +38,12 @@ section {
 }
 
 .modal-content {
+    display: flex;
     background-color: #fefefe;
     margin: 15% auto;
     padding: 40px;
     border: 1px solid #888;
     width: 60%;
-    height: 40%;
 }
 
 
@@ -60,7 +53,7 @@ section {
     position: relative;
     width: 160px;
     height: 200px;
-    margin: 25px 25px;
+    margin-bottom: 25%;
     padding: 20px;
     background: #fff;
     border-radius: 5px;

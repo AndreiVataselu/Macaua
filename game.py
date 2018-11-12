@@ -11,13 +11,16 @@ class Game:
         self.ainames_index = sample(range(len(self.ainames)), players_number)
 
         self.console_text = ""
+        # The current suit will never be ace unless it's the first card of the game so the player can put down
+        # whatever card he wants, so we set it 'ace' as default.
+        self._current_suit = 'ace'
         self.deck = [Card(i) for i in range(54)]
         self.shuffle_cards()
         self.handed_cards = [[self.deck.pop() for _ in range(5)] for _ in range(players_number)]
         self.ai_players = [AIPlayer(self.handed_cards[i], self.ainames[self.ainames_index[i]])
                            for i in range(1, players_number)]
 
-        self.player_name = "Michael" # <- User will be able to change his name
+        self.player_name = "Michael"  # <- User will be able to change his name
         self.player_cards = self.handed_cards[0]
 
         self.card_on_table = self.deck.pop()
@@ -26,6 +29,17 @@ class Game:
         while self.is_bulge_card(self.card_on_table.id) or self.is_wait_turn_card(self.card_on_table.id):
             self.deck.insert(0, self.card_on_table)
             self.card_on_table = self.deck.pop()
+
+    @property
+    def current_suit(self):
+        if self.card_on_table.suit != 'ace':
+            self._current_suit = self.card_on_table.suit
+        return self._current_suit
+
+    @current_suit.setter
+    def current_suit(self, suit):
+        self.console_text = "changes the suit to {0}".format(suit.title())
+        self._current_suit = suit
 
     # Basic cards functions
     def shuffle_cards(self):
@@ -63,29 +77,30 @@ class Game:
             return True
         return False
 
-    def is_same_type(self, card): # Same number but not same suit
+    def is_same_value(self, card):  # Same number but not same suit
         for i in range(4):
             if self.card_on_table.id + i*13 == card or self.card_on_table.id - i*13 == card:
                 return True
         return False
 
-    def is_compatbile(self, card):
-        # Clubs (0,11) ; # Diamonds (13,24) ; # Hearts (26, 37) ; # Spades (39,50)
-        if self.card_on_table.id in range(CLUBS_2, CLUBS_K+1) and card in range(CLUBS_2, CLUBS_K+1):
-            return True
-        elif self.card_on_table.id in range(DIAMONDS_2, DIAMONDS_K+1) and card in range(DIAMONDS_2, DIAMONDS_K+1):
-            return True
-        elif self.card_on_table.id in range(HEARTS_2, HEARTS_K+1) and card in range(HEARTS_2, HEARTS_K+1):
-            return True
-        elif self.card_on_table.id in range(SPADES_2, SPADES_K+1) and card in range(SPADES_2, SPADES_K+1):
+    def is_compatible(self, card):
+        card_suit = Card(card).suit
+
+        if self.current_suit == card_suit:
             return True
         elif self.is_bulge_card(self.card_on_table.id) and self.is_bulge_card(card):
             return True
         elif self.is_wait_turn_card(self.card_on_table.id) and self.is_wait_turn_card(card):
             return True
-        elif self.is_same_type(card):
+        elif self.is_same_value(card):
             return True
         elif self.is_ace(card):
+            return True
+        elif self.current_suit == 'ace':  # Current suit will never be ace unless it's first card.
+            return True
+        elif card == JOKER_RED or card == JOKER_BLACK:
+            return True
+        elif self.current_suit == 'joker':
             return True
         return False
 

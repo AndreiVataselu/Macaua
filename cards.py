@@ -1,5 +1,4 @@
-
-# CARDS Class:
+# CARD Class:
 
 
 class Card:
@@ -7,6 +6,21 @@ class Card:
     def __init__(self, ID):
         self.image = images[ID]
         self.id = ID
+
+    @property
+    def suit(self):
+        if self.id in range(CLUBS_2, CLUBS_K+1):
+            return 'clubs'
+        elif self.id in range(DIAMONDS_2, DIAMONDS_K+1):
+            return 'diamonds'
+        elif self.id in range(HEARTS_2, HEARTS_K+1):
+            return 'hearts'
+        elif self.id in range(SPADES_2, SPADES_K+1):
+            return 'spades'
+        elif self.id == 52 or self.id == 53:
+            return 'joker'
+        elif self.id == 12 or self.id == 25 or self.id == 38 or self.id == 51:
+            return 'ace'
 
 
 # CARDS VARIABLES:

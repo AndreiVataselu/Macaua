@@ -13,25 +13,30 @@ def game_main():
 
 @app.route('/chosenCard', methods=['POST'])
 def chosen_card():
-    # TODO: Bug - When a player clicks an ace on the table he can change the suit.
     try:
         player_chosen_card = int(request.json)
-        if game.is_compatbile(player_chosen_card):
+        if game.is_compatible(player_chosen_card):
             game.put_card(player_chosen_card)
             if game.is_ace(player_chosen_card):
-                return jsonify({'player_cards': render_template('playercards.html', player_deck=game.player_cards),
-                                'table_card': render_template('cardOnTable.html', card_on_table=game.card_on_table),
-                                'console_text': render_template('console.html', console_text=game.console_text,
-                                                                player_name=game.player_name),
-                                'ace': True})
+                return jsonify({
+                    'player_cards': render_template('playercards.html', player_deck=game.player_cards),
+                    'table_card': render_template('cardOnTable.html', card_on_table=game.card_on_table),
+                    'console_text': render_template('console.html', console_text=game.console_text,
+                                                    player_name=game.player_name),
+                    'ace': True
+                })
             else:
-                return jsonify({'player_cards': render_template('playercards.html', player_deck=game.player_cards),
-                                'table_card': render_template('cardOnTable.html', card_on_table=game.card_on_table),
-                                'console_text': render_template('console.html', console_text=game.console_text,
-                                                                player_name=game.player_name)})
+                return jsonify({
+                    'player_cards': render_template('playercards.html', player_deck=game.player_cards),
+                    'table_card': render_template('cardOnTable.html', card_on_table=game.card_on_table),
+                    'console_text': render_template('console.html', console_text=game.console_text,
+                                                                player_name=game.player_name)
+                })
 
         else:
             print("card not compatible")
+            print("{0} on table, you tried {1}".format(game.card_on_table.id, player_chosen_card))
+            print(game.current_suit)
             return jsonify({'result': 'failed'})
 
     except ValueError:
@@ -46,6 +51,15 @@ def draw_card():
     return jsonify({'player_cards': render_template('playercards.html', player_deck=game.player_cards),
                     'console_text': render_template('console.html', console_text=game.console_text,
                                                     player_name=game.player_name)})
+
+
+@app.route('/changeSuit', methods=['POST'])
+def change_suit():
+    game.current_suit = request.json
+
+    return jsonify({
+        'console_text': render_template('console.html', console_text=game.console_text, player_name=game.player_name)
+    })
 
 
 if __name__ == '__main__':
