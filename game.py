@@ -17,6 +17,7 @@ class Game:
         self._current_suit = 'ace'
         self.deck = [Card(i) for i in range(54)]
         self.cards_to_take = 0 # This variable will change upon bulge cards.
+        self.turns_to_wait = 0
         self.shuffle_cards()
         self.handed_cards = [[self.deck.pop() for _ in range(5)] for _ in range(players_number)]
         self.ai_players = [AIPlayer(player_cards=self.handed_cards[i], name=self.ainames[self.ainames_index[i]])
@@ -65,13 +66,16 @@ class Game:
         if self.is_bulge_card(card):
             self.bulge_card(card)
 
+        if self.is_wait_turn_card(card):
+            self.turns_to_wait += 1
+
         for player_card in playing_cards:
             if player_card.id == card:
                 self.card_on_table = playing_cards.pop(playing_cards.index(player_card))
                 self.console.append(ConsoleMessage(name, "places a card of {0}".format(names[card])))
 
     # When player puts a 4 card on the table, next player skips the turn.
-    def wait_turn(self, player):
+    def skip_turn(self, player):
         self.console.append(ConsoleMessage(player.name, "has {0} more turns to wait".format(player.turns_to_wait)))
         player.turns_to_wait -= 1
         self.next_turn()
@@ -145,6 +149,15 @@ class Game:
         elif card == JOKER_RED:
             cards_to_take = 10
         self.cards_to_take += cards_to_take
+
+    def check_wait_turn(self, player):
+        if self.turns_to_wait > 0:  # TODO: And player has no wait turn card in hand
+            player.turns_to_wait += self.turns_to_wait
+            if self.turns_to_wait == 1:
+                self.console.append(ConsoleMessage(player.name, "waits {0} turn".format(self.turns_to_wait)))
+            else:
+                self.console.append(ConsoleMessage(player.name, "waits {0} turns".format(self.turns_to_wait)))
+            self.turns_to_wait = 0
 
     # ---------------------------------------------------------------------------------------------------------
 

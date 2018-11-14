@@ -60,9 +60,28 @@ $(function(){
            $('#console').html(resp.console_text);
            scroll();
            modal.style.display = "none";
-           aiMove(resp.turnsToMake)
+           aiMove(resp.turnsToMake);
        });
    });
+
+   function checkSkipTurn(){
+       req = $.ajax({
+           url: '/playerWaitTurn',
+           type: 'POST',
+           async: false
+       });
+
+       req.done(function(resp){
+          $('#console').html(resp.console_text);
+          scroll();
+
+          console.log(resp.skipPlayer);
+          if(resp.skipPlayer){
+              console.log(resp.skipPlayer);
+              aiMove(resp.turnsToMake);
+          }
+       });
+   }
 
    function aiMove(turnsToMake){
        for (i=0; i < turnsToMake; i++) {
@@ -91,6 +110,7 @@ $(function(){
            $('#console').html(resp.console_text);
            scroll();
            $('.playerDeck').html(resp.player_cards);
+           checkSkipTurn()
        });
    }
 });

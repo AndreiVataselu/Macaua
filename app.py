@@ -4,7 +4,7 @@ from player import *
 import random
 
 app = Flask(__name__)
-game = Game(4)
+game = Game(2)
 
 
 @app.route('/')
@@ -18,6 +18,7 @@ def game_main():
 def ai_make_move():
     if game.turn != 0:
         ai_player = game.ai_players[game.turn - 1]
+        game.check_wait_turn(ai_player)
         if ai_player.turns_to_wait == 0:
             game.take_cards(ai_player)
             put_card = False
@@ -34,7 +35,7 @@ def ai_make_move():
                 game.draw_card(ai_player.playing_cards, ai_player.name)
 
         else:
-            game.wait_turn(ai_player)
+            game.skip_turn(ai_player)
 
         return jsonify({
             'console_text': render_template('console.html', console_messages=game.console),
@@ -97,17 +98,33 @@ def change_suit():
     game.next_turn()
     return jsonify({
         'console_text': render_template('console.html', console_messages=game.console),
-        'turnsToMake': len(game.ai_players)})
+        'turnsToMake': len(game.ai_players)
+    })
 
 
 @app.route('/playerTakeCards', methods=['POST'])
 def player_take_cards():
-    if game.player.turns_to_wait == 0:  #AND user has no bulge cards
+    if game.player.turns_to_wait == 0:  #TODO: AND user has no bulge cards
         game.take_cards(game.player)
         return jsonify({
             'console_text': render_template('console.html', console_messages=game.console),
             'player_cards': render_template('playercards.html', player_deck=game.player.playing_cards)
         })
+
+@app.route('/playerWaitTurn', methods=['POST'])
+def player_wait_turn():
+    game.check_wait_turn(game.player)
+    skip_player = False
+    if game.player.turns_to_wait > 0:
+        game.skip_turn(game.player)
+        skip_player = True
+        print("Game skip: {0}".format(skip_player))
+
+    return jsonify({
+        'console_text': render_template('console.html', console_messages=game.console),
+        'turnsToMake': len(game.ai_players),
+        'skipPlayer': skip_player
+    })
 
 
 if __name__ == '__main__':
