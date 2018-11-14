@@ -8,7 +8,7 @@ PLAYER_5 = 5
 
 class Player:
 
-    def __init__(self, name, player_cards, player_index):
+    def __init__(self, name, player_cards):
         self.name = name
         self.playing_cards = player_cards
         self.turns_to_wait = 0
@@ -20,5 +20,5 @@ class Player:
 
 
 class AIPlayer(Player):
-    def __init__(self, name, player_cards, player_index):
-        super().__init__(name, player_cards, player_index)
+    def __init__(self, name, player_cards):
+        super().__init__(name, player_cards)

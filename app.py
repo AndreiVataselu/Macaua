@@ -4,7 +4,7 @@ from player import *
 import random
 
 app = Flask(__name__)
-game = Game(3)
+game = Game(4)
 
 
 @app.route('/')
@@ -17,23 +17,27 @@ def game_main():
 @app.route('/AImove', methods=['POST'])
 def ai_make_move():
     if game.turn != 0:
-        put_card = False
-        ai_name = game.ai_players[game.turn - 1].name
-        for card in game.ai_players[game.turn - 1].playing_cards:
-            if game.is_compatible(card.id):
-                print('found compatible {0}'.format(card.id))
-                game.put_card(card.id, game.ai_players[game.turn - 1].playing_cards)
-                put_card = True
-                if game.is_ace(card.id):
-                    game.current_suit = random.choice(['diamonds', 'hearts', 'clubs', 'spades'])
-                break
-        if not put_card:
-            print('draw card')
-            game.draw_card(game.ai_players[game.turn - 1].playing_cards)
+        ai_player = game.ai_players[game.turn - 1]
+        if ai_player.turns_to_wait == 0:
+            game.take_cards(ai_player)
+            put_card = False
+            for card in ai_player.playing_cards:
+                if game.is_compatible(card.id):
+                    game.put_card(card.id, ai_player.playing_cards, ai_player.name)
+                    if game.is_ace(card.id):
+                        game.change_suit(random.choice(['diamonds', 'hearts', 'clubs', 'spades']), ai_player.name)
+                    put_card = True
+                    game.next_turn()
+                    break
+            if not put_card:
+                print('draw card')
+                game.draw_card(ai_player.playing_cards, ai_player.name)
+
+        else:
+            game.wait_turn(ai_player)
 
         return jsonify({
-            'console_text': render_template('console.html', console_text=game.console_text,
-                                            player_name=ai_name),
+            'console_text': render_template('console.html', console_messages=game.console),
             'table_card': render_template('cardOnTable.html', card_on_table=game.card_on_table),
             'aiPlayers': render_template('aiPlayersCards.html', players_cards=game.ai_players),
             'turnsToMake': len(game.ai_players)
@@ -46,34 +50,31 @@ def chosen_card():
         try:
             player_chosen_card = int(request.json)
             if game.is_compatible(player_chosen_card):
-                game.put_card(player_chosen_card, game.player.playing_cards)
+                game.put_card(player_chosen_card, game.player.playing_cards, game.player.name)
                 if game.is_ace(player_chosen_card):
                     return jsonify({
                         'player_cards': render_template('playercards.html', player_deck=game.player.playing_cards),
                         'table_card': render_template('cardOnTable.html', card_on_table=game.card_on_table),
-                        'console_text': render_template('console.html', console_text=game.console_text,
-                                                        player_name=game.player.name),
+                        'console_text': render_template('console.html', console_messages=game.console),
                         'ace': True,
                         'turnsToMake': len(game.ai_players)
                     })
                 else:
+                    game.next_turn()
                     return jsonify({
                         'player_cards': render_template('playercards.html', player_deck=game.player.playing_cards),
                         'table_card': render_template('cardOnTable.html', card_on_table=game.card_on_table),
-                        'console_text': render_template('console.html', console_text=game.console_text,
-                                                        player_name=game.player.name),
+                        'console_text': render_template('console.html', console_messages=game.console),
                         'turnsToMake': len(game.ai_players)
                     })
 
             else:
-                print("card not compatible")
-                print("{0} on table, you tried {1}".format(game.card_on_table.id, player_chosen_card))
-                print(game.current_suit)
                 return jsonify({'result': 'failed'})
 
         except ValueError:
             print('Clicked on screen')
             return jsonify({'result': 'failed'})
+
     else:
         return jsonify({'result': 'failed'})
 
@@ -81,11 +82,10 @@ def chosen_card():
 @app.route('/drawCard', methods=['POST'])
 def draw_card():
     if game.turn == PLAYER_0:
-        game.draw_card(game.player.playing_cards)
+        game.draw_card(game.player.playing_cards, game.player.name)
 
         return jsonify({'player_cards': render_template('playercards.html', player_deck=game.player.playing_cards),
-                        'console_text': render_template('console.html', console_text=game.console_text,
-                                                        player_name=game.player.name),
+                        'console_text': render_template('console.html', console_messages=game.console),
                         'turnsToMake': len(game.ai_players)})
     else:
         return jsonify({'result': 'failed'})
@@ -93,12 +93,22 @@ def draw_card():
 
 @app.route('/changeSuit', methods=['POST'])
 def change_suit():
-    game.current_suit = request.json
-
+    game.change_suit(request.json, game.player.name)
+    game.next_turn()
     return jsonify({
-        'console_text': render_template('console.html', console_text=game.console_text, player_name=game.player.name),
+        'console_text': render_template('console.html', console_messages=game.console),
         'turnsToMake': len(game.ai_players)})
 
 
+@app.route('/playerTakeCards', methods=['POST'])
+def player_take_cards():
+    if game.player.turns_to_wait == 0:  #AND user has no bulge cards
+        game.take_cards(game.player)
+        return jsonify({
+            'console_text': render_template('console.html', console_messages=game.console),
+            'player_cards': render_template('playercards.html', player_deck=game.player.playing_cards)
+        })
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

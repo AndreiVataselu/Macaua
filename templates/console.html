@@ -1,3 +1,5 @@
 {% block console %}
-<p><b>{{player_name}}</b> {{console_text}}</p>
+    {% for message in console_messages %}
+        <p><b>{{message.player_name}}</b> {{message.text}}</p>
+    {% endfor %}
 {% endblock console %}

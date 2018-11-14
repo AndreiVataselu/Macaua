@@ -9,13 +9,14 @@ $(function(){
 
    $('.drawCard').on('click', function(){
       req = $.ajax({
-         url: '/drawCard',
-         type: 'POST'
+            url: '/drawCard',
+            type: 'POST',
+            async: false
       });
 
       req.done(function(resp) {
          $('.playerDeck').html(resp.player_cards);
-         $('#console').append(resp.console_text);
+         $('#console').html(resp.console_text);
          scroll();
          aiMove(resp.turnsToMake);
 
@@ -27,14 +28,15 @@ $(function(){
           url : '/chosenCard',
           type : 'POST',
           data: JSON.stringify(e.target.id, null, '\t'),
-          contentType: 'application/json;charset=UTF-8'
+          contentType: 'application/json;charset=UTF-8',
+          async: false
 
       });
 
       req.done(function(resp){
         $('.playerDeck').html(resp.player_cards);
         $('.tableCard').html(resp.table_card);
-        $('#console').append(resp.console_text);
+        $('#console').html(resp.console_text);
          scroll();
          if(resp.ace===true){
              console.log("ace-true");
@@ -50,11 +52,12 @@ $(function(){
            url: '/changeSuit',
            type: 'POST',
            data: JSON.stringify(e.target.id, null, '\t'),
-           contentType: 'application/json;charset=UTF-8'
+           contentType: 'application/json;charset=UTF-8',
+           async: false
        });
 
        req.done(function(resp){
-           $('#console').append(resp.console_text);
+           $('#console').html(resp.console_text);
            scroll();
            modal.style.display = "none";
            aiMove(resp.turnsToMake)
@@ -64,16 +67,30 @@ $(function(){
    function aiMove(turnsToMake){
        for (i=0; i < turnsToMake; i++) {
            req = $.ajax({
-              url: '/AImove',
-              type: 'POST'
+                url: '/AImove',
+                type: 'POST',
+                async: false
            });
 
            req.done(function(resp){
-              $('#console').append(resp.console_text);
+              $('#console').html(resp.console_text);
               scroll();
               $('.tableCard').html(resp.table_card);
               $('.aiPlayers').html(resp.aiPlayers);
 
            });
-   }}
+       }
+
+       req = $.ajax({
+           url: '/playerTakeCards',
+           type: 'POST',
+           async: false
+       });
+
+       req.done(function(resp){
+           $('#console').html(resp.console_text);
+           scroll();
+           $('.playerDeck').html(resp.player_cards);
+       });
+   }
 });
