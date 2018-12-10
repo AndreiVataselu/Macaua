@@ -20,6 +20,7 @@ $(function(){
          scroll();
          aiMove(resp.turnsToMake);
 
+
       });
    });
 
@@ -42,6 +43,7 @@ $(function(){
              console.log("ace-true");
              modal.style.display = "block";
          } else {
+             checkEndGame();
              aiMove(resp.turnsToMake);
          }
       });
@@ -83,6 +85,15 @@ $(function(){
        });
    }
 
+   function checkEndGame(){
+       req = $.ajax({
+           url: '/checkEndGame',
+           type: 'POST',
+           async: false
+       });
+
+   }
+
    function aiMove(turnsToMake){
        for (i=0; i < turnsToMake; i++) {
            req = $.ajax({
@@ -96,7 +107,7 @@ $(function(){
               scroll();
               $('.tableCard').html(resp.table_card);
               $('.aiPlayers').html(resp.aiPlayers);
-
+              checkEndGame();
            });
        }
 
@@ -110,7 +121,8 @@ $(function(){
            $('#console').html(resp.console_text);
            scroll();
            $('.playerDeck').html(resp.player_cards);
-           checkSkipTurn()
+           checkEndGame();
+           checkSkipTurn();
        });
    }
 });

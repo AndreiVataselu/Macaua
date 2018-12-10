@@ -1,15 +1,13 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, redirect, url_for
 from game import Game
 from player import *
-import random
 
 app = Flask(__name__)
-game = Game(2)
+game = Game.new_game(3)
 
 
 @app.route('/')
 def game_main():
-
     return render_template('game.html', card_on_table=game.card_on_table, player_deck=game.player.playing_cards,
                            players_cards=game.ai_players)
 
@@ -18,22 +16,10 @@ def game_main():
 def ai_make_move():
     if game.turn != 0:
         ai_player = game.ai_players[game.turn - 1]
-        game.check_wait_turn(ai_player)
-        if ai_player.turns_to_wait == 0:
-            game.take_cards(ai_player)
-            put_card = False
-            for card in ai_player.playing_cards:
-                if game.is_compatible(card.id):
-                    game.put_card(card.id, ai_player.playing_cards, ai_player.name)
-                    if game.is_ace(card.id):
-                        game.change_suit(random.choice(['diamonds', 'hearts', 'clubs', 'spades']), ai_player.name)
-                    put_card = True
-                    game.next_turn()
-                    break
-            if not put_card:
-                print('draw card')
-                game.draw_card(ai_player.playing_cards, ai_player.name)
-
+        if not ai_player.won:
+            game.check_wait_turn(ai_player)
+        if ai_player.turns_to_wait == 0 and not ai_player.won:
+            ai_player.make_move(game)
         else:
             game.skip_turn(ai_player)
 
@@ -111,6 +97,7 @@ def player_take_cards():
             'player_cards': render_template('playercards.html', player_deck=game.player.playing_cards)
         })
 
+
 @app.route('/playerWaitTurn', methods=['POST'])
 def player_wait_turn():
     game.check_wait_turn(game.player)
@@ -125,6 +112,21 @@ def player_wait_turn():
         'turnsToMake': len(game.ai_players),
         'skipPlayer': skip_player
     })
+
+
+@app.route('/checkEndGame', methods=['POST'])
+def check_game_end():
+    if game.check_end_game():
+        return redirect(url_for('game_ended'))
+    else:
+        return jsonify({
+            'game_end': 'false'
+        })
+
+
+@app.route('/end')
+def game_ended():
+    return render_template('end-game.html', ranking=game.ranking)
 
 
 if __name__ == '__main__':

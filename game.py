@@ -5,36 +5,83 @@ from player import *
 
 class Game:
 
-    def __init__(self, players_number):
-        self.ainames = ['Elvie', 'Mac', 'Lida', 'Todd', 'Soledad', 'Valerie', 'Sylvester',
-                        'Ericka', 'Nicolette', 'Clay', 'Claretha', 'Kit', 'Myron', 'Susanne',
-                        'Miriam', 'Casimira', 'Zena', 'Hae', 'Chanell', 'Ione']
-        self.ainames_index = sample(range(len(self.ainames)), players_number)
+    _instance = None
 
-        self.console = []
-        # The current suit will never be ace unless it's the first card of the game so the player can put down
-        # whatever card he wants, so we set it 'ace' as default.
-        self._current_suit = 'ace'
-        self.deck = [Card(i) for i in range(54)]
-        self.cards_to_take = 0 # This variable will change upon bulge cards.
-        self.turns_to_wait = 0
-        self.shuffle_cards()
-        self.handed_cards = [[self.deck.pop() for _ in range(5)] for _ in range(players_number)]
-        self.ai_players = [AIPlayer(player_cards=self.handed_cards[i], name=self.ainames[self.ainames_index[i]])
-                           for i in range(1, players_number)]
+    @staticmethod
+    def get_game():
+        if Game._instance == None:
+            print("Game has not started")
+        else:
+            return Game._instance
 
-        self.player = Player(name="Michael", player_cards=self.handed_cards[0])
+    @staticmethod
+    def new_game(players):
+        Game(players, new_game=True)
+        return Game._instance
 
-        self._turn = [i for i in range(players_number)]
-        self.turn = None
-        self.next_turn()
+    def __init__(self, players_number, **kwargs):
+        if "new_game" in kwargs:
+            self.ranking = []
+            self.ainames = ['Elvie', 'Mac', 'Lida', 'Todd', 'Soledad', 'Valerie', 'Sylvester',
+                            'Ericka', 'Nicolette', 'Clay', 'Claretha', 'Kit', 'Myron', 'Susanne',
+                            'Miriam', 'Casimira', 'Zena', 'Hae', 'Chanell', 'Ione']
+            self.ainames_index = sample(range(len(self.ainames)), players_number)
 
-        self.card_on_table = self.deck.pop()
+            self.console = []
+            # The current suit will never be ace unless it's the first card of the game so the player can put down
+            # whatever card he wants, so we set it 'ace' as default.
+            self._current_suit = 'ace'
+            self.deck = [Card(i) for i in range(54)]
+            self.cards_to_take = 0 # This variable will change upon bulge cards.
+            self.turns_to_wait = 0
+            self.shuffle_cards()
+            self.handed_cards = [[self.deck.pop() for _ in range(5)] for _ in range(players_number)]
+            self.ai_players = [AIPlayer(player_cards=self.handed_cards[i], name=self.ainames[self.ainames_index[i]])
+                               for i in range(1, players_number)]
 
-        # No bulge card or wait turn card from beginning of game
-        while self.is_bulge_card(self.card_on_table.id) or self.is_wait_turn_card(self.card_on_table.id):
-            self.deck.insert(0, self.card_on_table)
+            self.player = Player(name="Michael", player_cards=self.handed_cards[0])
+
+            self._turn = [i for i in range(players_number)]
+            self.turn = None
+            self.next_turn()
+
             self.card_on_table = self.deck.pop()
+
+            # No bulge card or wait turn card from beginning of game
+            while self.is_bulge_card(self.card_on_table.id) or self.is_wait_turn_card(self.card_on_table.id):
+                self.deck.insert(0, self.card_on_table)
+                self.card_on_table = self.deck.pop()
+
+            Game._instance = self
+        else:
+            print("No access!")
+
+    def check_end_game(self):
+        if self.player.cards_left > 0:
+            for index in range(len(self.ai_players)):
+                if self.ai_players[index].cards_left == 0 and not self.ai_players[index].won:
+                    self.ai_players[index].won = True
+                    self.ranking.append(self.ai_players[index].name)
+
+        elif self.player.cards_left == 0:
+            self.player.won = True
+            self.ranking.append(self.player.name)
+            for player in self.ai_players:
+                self.ranking.append(player.name)
+
+        if self.player.won:
+            return True
+
+        players_to_win = 0
+        for player in self.ai_players:
+            if player.won:
+                players_to_win += 1
+
+        if players_to_win == len(self.ai_players):
+            return True
+
+        return False
+
 
     @property
     def current_suit(self):
@@ -76,8 +123,9 @@ class Game:
 
     # When player puts a 4 card on the table, next player skips the turn.
     def skip_turn(self, player):
-        self.console.append(ConsoleMessage(player.name, "has {0} more turns to wait".format(player.turns_to_wait)))
+        print("{} has {} turns".format(player.name, player.turns_to_wait))
         player.turns_to_wait -= 1
+        print(player.turns_to_wait)
         self.next_turn()
 
     # When bulge cards are on the table, the next player take cards.
@@ -149,6 +197,7 @@ class Game:
         elif card == JOKER_RED:
             cards_to_take = 10
         self.cards_to_take += cards_to_take
+        return
 
     def check_wait_turn(self, player):
         if self.turns_to_wait > 0:  # TODO: And player has no wait turn card in hand
@@ -157,7 +206,9 @@ class Game:
                 self.console.append(ConsoleMessage(player.name, "waits {0} turn".format(self.turns_to_wait)))
             else:
                 self.console.append(ConsoleMessage(player.name, "waits {0} turns".format(self.turns_to_wait)))
+
             self.turns_to_wait = 0
+            return
 
     # ---------------------------------------------------------------------------------------------------------
 
